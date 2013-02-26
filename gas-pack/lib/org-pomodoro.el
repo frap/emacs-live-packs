@@ -44,7 +44,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defvar org-pomodoro-sound
   (concat (file-name-directory load-file-name)
-          "/Users/agasson/Music/sounds/bell.wav")
+          "/resources/bell.wav")
   "The path to a sound file that´s to be played when a pomodoro was finished.")
 
 (defvar org-pomodoro-killed-sound nil
@@ -59,7 +59,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defvar org-pomodoro-short-break-sound
   (concat (file-name-directory load-file-name)
-          "/Users/agasson/Music/sounds/bell.wav")
+          "/resources/violence.wav")
   "The path to a sound file that´s to be played when a break was finished.")
 
 ;; LONG BREAK VALUES
@@ -71,7 +71,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defvar org-pomodoro-long-break-sound
   (concat (file-name-directory load-file-name)
-          "/Users/agasson/Music/sounds/bell_multiple.wav")
+          "/resources/bell_multiple.wav")
   "The path to a sound file that´s to be played when a long break is finished.")
 
 
@@ -89,6 +89,25 @@ a pomodoro and to :longbreak or :break when starting a break.")
   "Org Pomodoro mode line color"
   :group 'faces)
 
+
+(setq tea-time-sound-command "afplay %s")
+
+(defun tea-time-play-sound ()
+  "Play sound"
+  (if tea-time-sound
+      (if tea-time-sound-command
+          (start-process-shell-command "tea-ready" nil (format tea-time-sound-command tea-time-sound))
+        (play-sound-file tea-time-sound))
+    (progn (beep t) (beep t)))
+  )
+
+
+(defun org-pomodoro-play-tos (sound)
+  (start-process-shell-command "tos-alert" nil "sox ~/.live-packs/gas-pack/lib/resources/tosalert.mp3 -d") )
+
+(defcustom org-pomodoro-sound-player "/usr/bin/afplay"
+  "Music player used to play sounds"
+)
 
 (defun org-pomodoro-play-sound (sound)
   "Plays a sound."
