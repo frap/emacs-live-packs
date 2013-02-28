@@ -1,18 +1,24 @@
 (defvar mode-line-cleaner-alist
   `((auto-complete-mode . " α")
-    (yas-global-mode . " γ")
+    (yas-minor-mode . " γ")
+
     (undo-tree-mode . " τ")
     (paredit-mode . " φ")
     (eldoc-mode . "")
     (abbrev-mode . "")
-    (nrepl-mode . "ηζ")
-
+    (volatile-highlights-mode . " υ")
+    (elisp-slime-nav-mode . " δ")
+    (nrepl-mode . " ηζ")
+    (nrepl-interaction-mode . " ηζ")
     ;; Major modes
     (clojure-mode . "λ")
+    (yas-global-mode . " γ")
     (hi-lock-mode . "")
     (python-mode . "π")
     (emacs-lisp-mode . "EL")
-    (nxhtml-mode . "nx"))
+    (nxhtml-mode . "nx")
+    (org-mode . "θ")
+    )
   "Alist for `clean-mode-line'.
 
 When you add a new element to the alist, keep in mind that you
@@ -33,3 +39,6 @@ want to use in the modeline *in lieu of* the original.")
 
 
 (add-hook 'after-change-major-mode-hook 'clean-mode-line)
+
+;;; Greek letters - C-u C-\ greek ;; C-\ to revert to default
+;;; ς ε ρ τ υ θ ι ο π α σ δ φ γ η ξ κ λ ζ χ ψ ω β ν μ

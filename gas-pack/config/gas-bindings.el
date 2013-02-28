@@ -1,4 +1,4 @@
-;;Time-stamp: <2013-02-20 08:32:13 agasson>
+;;Time-stamp: <2013-02-28 20:51:08 agasson>
 
 ;;(define-key global-map (kbd "M-3") (lambda () (interactive) (insert "#")))
 
@@ -24,14 +24,16 @@
 ;;(global-set-key (kbd "\C-cI")   'bh/punch-in)
 ;;(global-set-key (kbd "\C-cO")   'bh/punch-out)
 ;;(global-set-key (kbd "\C-c SPC") 'bh/clock-in-last-task)
-(global-set-key (kbd "C-c C-x C-i") 'org-pomodoro)
-(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
+;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+
 
 ;;(global-set-key (kbd (f9)) 'org-clock-goto)
 ;;(global-set-key (kbd "<f11>") 'f11)
 
-;;(define-key f9 (kbd "I") 'gas/clock-in)
-;;(define-key f9 (kbd "O") 'gas/clock-out)
+;(define-key f2 (kbd "I") 'gas/punch-in)
+;(define-key f2 (kbd "O") 'gas/punch-out)
+
 ;;(define-key f9 (kbd "SPC") 'gas/clock-in-last-task)
 ;;(define-key <f11> 'org-clock-goto)
 ;;(define-key (kbd "\C") f11 'org-clock-in)

@@ -126,7 +126,7 @@
     (let ((end (save-excursion (org-end-of-subtree t))))
       (outline-end-of-heading)
       (and (oh/is-project-p)
-           (not (re-search-forward "^\\*+ \\(ENCOURS\\|COMMENCÉ\\) " end t))))))
+           (not (re-search-forward "^\\*+ \\(EN_COURS\\|COMMENCÉ\\) " end t))))))
 
 (defun oh/is-non-stuck-project-p ()
   "Returns t for any heading that is a project and has a `ENCOURS` subtask."
@@ -134,7 +134,7 @@
     (let ((end (save-excursion (org-end-of-subtree t))))
       (outline-end-of-heading)
       (and (oh/is-project-p)
-           (re-search-forward "^\\*+ \\(ENCOURS\\|COMMENCÉ\\) " end t)))))
+           (re-search-forward "^\\*+ \\(EN_COURS\\|COMMENCÉ\\) " end t)))))
 
 (defun oh/is-subproject-p ()
   "Returns t for any heading that is a project and has a parent project."
@@ -166,13 +166,13 @@
   (org-is-habit-p))
 
 (defun oh/is-inactive-p ()
-  "Returns t for any heading that is of todo state `SOMEDAY`, `HOLD`,
-`WAITING`, `DONE` or `CANCELLED`. This also applys to headings that
+  "Returns t for any heading that is of todo state `UN_JOUR`, `SOUTE`,
+`ATTENTE`, `FINI` or `ANNULÉ`. This also applys to headings that
 have parent headings that are of those given todo states."
   (save-excursion
-    (let ((is-inactive (member (org-get-todo-state) '("SOMEDAY" "HOLD" "WAITING" "CANCELLED" "DONE"))))
+    (let ((is-inactive (member (org-get-todo-state) '("UN_JOUR" "SOUTE" "ATTENTE" "ANNULÉ" "FINI"))))
       (while (and (not is-inactive) (org-up-heading-safe))
-        (when (member (org-get-todo-state) '("SOMEDAY" "HOLD" "WAITING" "CANCELLED" "DONE"))
+        (when (member (org-get-todo-state) '("SOMEDAY" "SOUTE" "ATTENTE" "ANNULÉ" "FINI"))
           (setq is-inactive t)))
       is-inactive)))
 
@@ -330,10 +330,114 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;;; MISC HELPERS
 
 (defun oh/summary-todo-checkbox (c-on c-off)
-  "Switch entry to DONE when all subentry-checkboxes are done,
+  "Switch entry to FINI when all subentry-checkboxes are done,
 to TODO otherwise."
   (outline-previous-visible-heading 1)
   (let (org-log-done org-log-states)
-    (org-todo (if (= c-off 0) "DONE" "TODO"))))
+    (org-todo (if (= c-off 0) "FINI" "TODO"))))
+
+(setq gas/keep-clock-running nil)
+
+(defun gas/clock-in-to-next (kw)
+  "Switch a task from TODO to EN_COURS when clocking in.
+Skips capture tasks, projects, and subprojects.
+Switch projects and subprojects from NEXT back to TODO"
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    (cond
+     ((and (member (org-get-todo-state) (list "TODO"))
+           (oh/is-task-p))
+      "EN_COURS")
+     ((and (member (org-get-todo-state) (list "EN_COURS"))
+           (oh/is-project-p))
+      "TODO"))))
+
+
+(defun gas/punch-in (arg)
+  "Start continuous clocking and set the default task to the
+selected task.  If no task is selected set the Organization task
+as the default task."
+  (interactive "p")
+  (setq gas/keep-clock-running t)
+  (if (equal major-mode 'org-agenda-mode)
+      ;;
+      ;; We're in the agenda
+      ;;
+      (let* ((marker (org-get-at-bol 'org-hd-marker))
+             (tags (org-with-point-at marker (org-get-tags-at))))
+        (if (and (eq arg 4) tags)
+            (org-agenda-clock-in '(16))
+          (gas/clock-in-organization-task-as-default)))
+    ;;
+    ;; We are not in the agenda
+    ;;
+    (save-restriction
+      (widen)
+      ; Find the tags on the current task
+      (if (and (equal major-mode 'org-mode) (not (org-before-first-heading-p)) (eq arg 4))
+          (org-clock-in '(16))
+        (gas/clock-in-organization-task-as-default)))))
+
+(defun gas/punch-out ()
+  (interactive)
+  (setq gas/keep-clock-running nil)
+  (when (org-clock-is-active)
+    (org-clock-out))
+  (org-agenda-remove-restriction-lock))
+
+(defun gas/clock-in-default-task ()
+  (save-excursion
+    (org-with-point-at org-clock-default-task
+      (org-clock-in))))
+
+(defun gas/clock-in-parent-task ()
+  "Move point to the parent (project) task if any and clock in"
+  (let ((parent-task))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (while (and (not parent-task) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (if parent-task
+            (org-with-point-at parent-task
+              (org-clock-in))
+          (when gas/keep-clock-running
+            (gas/clock-in-default-task)))))))
+
+(defvar gas/organization-task-id "EA0E8723-0480-450F-8224-66438AC996E0")
+
+(defun gas/clock-in-organization-task-as-default ()
+  (interactive)
+  (org-with-point-at (org-id-find gas/organization-task-id 'marker)
+    (org-clock-in '(16))))
+
+(defun gas/clock-out-maybe ()
+  (when (and gas/keep-clock-running
+             (not org-clock-clocking-in)
+             (marker-buffer org-clock-default-task)
+             (not org-clock-resolving-clocks-due-to-idleness))
+    (gas/clock-in-parent-task)))
+
+
+(defun gas/skip-non-archivable-tasks ()
+  "Skip trees that are not available for archiving"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      ;; Consider only tasks with done todo headings as archivable candidates
+      (if (member (org-get-todo-state) org-done-keywords)
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (daynr (string-to-int (format-time-string "%d" (current-time))))
+                 (a-month-ago (* 60 60 24 (+ daynr 1)))
+                 (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
+                 (this-month (format-time-string "%Y-%m-" (current-time)))
+                 (subtree-is-current (save-excursion
+                                       (forward-line 1)
+                                       (and (< (point) subtree-end)
+                                            (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
+            (if subtree-is-current
+                next-headline ; Has a date in this month or last month, skip it
+              nil))  ; available to archive
+        (or next-headline (point-max))))))
 
 (provide 'org-helpers)

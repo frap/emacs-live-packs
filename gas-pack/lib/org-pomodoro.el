@@ -91,6 +91,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 
 (setq tea-time-sound-command "afplay %s")
+(setq org-pomodoro-sox-cmd "sox %s -d")
 
 (defun tea-time-play-sound ()
   "Play sound"
@@ -102,8 +103,8 @@ a pomodoro and to :longbreak or :break when starting a break.")
   )
 
 
-(defun org-pomodoro-play-tos (sound)
-  (start-process-shell-command "tos-alert" nil "sox ~/.live-packs/gas-pack/lib/resources/tosalert.mp3 -d") )
+(defun org-pomodoro-play-sox (sound)
+  (start-process-shell-command "sox" nil (format org-pomodoro-sox-cmd sound)) )
 
 (defcustom org-pomodoro-sound-player "/usr/bin/afplay"
   "Music player used to play sounds"
@@ -112,7 +113,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 (defun org-pomodoro-play-sound (sound)
   "Plays a sound."
   (when (and org-pomodoro-play-sounds sound)
-    (play-sound-file sound)))
+    (org-pomodoro-play-sox sound)))
 
 
 (defun org-pomodoro-minutes ()
@@ -216,7 +217,7 @@ notification, play a sound and start a pomodoro break."
   "Is invoked when a pomodoro was killed. This may send a notification,
 play a sound and adds log."
   (notify "Pomodoro killed" "One does not simply kill a pomodoro!")
-  (org-clock-cancel)
+;  (org-clock-cancel)
   (org-pomodoro-reset)
   (run-hooks 'org-pomodoro-killed-hook)
   (org-pomodoro-update-mode-line))

@@ -7,10 +7,13 @@
 (live-load-config-file "gas-bindings.el")
 (live-load-config-file "gas-spell.el")
 
+;; Load alerts
+(live-add-pack-lib "alert")
+(require 'alert)
 
-
-;; use zenburn as the default theme
-;(load-theme 'zenburn t)
+(defvar alert-default-style 'growl)
+(alert "This is an debugalert" :title "My Alert" :category 'debug)
+(alert "This is a SERIOUS alert" :category 'critical )
 
 ;(load-file (concat (live-pack-lib-dir) "gandalf.el"))
 

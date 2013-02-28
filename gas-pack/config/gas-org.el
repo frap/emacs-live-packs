@@ -1,5 +1,10 @@
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.org_archive$" . org-mode))
+;;;
+;;; Gas Org Mode
+;;;
+;(load-file "todochiuku.el")
+
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+(require 'org)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -9,25 +14,52 @@
 (require 'org-helpers)
 
 ;; POMODORO SETTINGS
-;(add-to-list 'load-path (concat custom-emacs-dir "vendor/org-pomodoro"))
+;;(add-to-list 'load-path (concat custom-emacs-dir "vendor/org-pomodoro"))
 (require 'org-pomodoro)
 
-(global-set-key (kbd "C-c C-x C-i") 'org-pomodoro)
-(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+(global-set-key (kbd "<f1>") 'org-agenda)
+(global-set-key (kbd "<f2>") 'org-clock-goto)
+(global-set-key (kbd "C-<f2>") 'org-clock-in)
 
-(require 'weblock)
+(defvar growl-program "growlnotify")
 
-(add-hook 'org-pomodoro-started-hook
-          '(lambda ()
-             (weblock/toggle 'on)))
+(defun growl (title message)
+  (start-process "growl" " growl"
+                 growl-program
+                 title
+                 "-a" "Emacs")
+  (process-send-string " growl" message)
+  (process-send-string " growl" "\n")
+  (process-send-eof " growl"))
 
-(add-hook 'org-pomodoro-finished-hook
-          '(lambda ()
-             (weblock/toggle 'off)))
+(add-to-list 'org-modules 'org-timer)
+(setq org-timer-default-timer 25)
+(add-hook 'org-clock-in-hook '(lambda ()  (if (not org-timer-current-timer)
+                                              (org-timer-set-timer '(16)))))
+(add-hook 'org-clock-out-hook '(lambda ()  (setq org-mode-line-string nil) (growl "Clock Out" "¡Has terminado!")))
+(add-hook 'org-timer-done-hook '(lambda () (growl "Pomodoro Done"  "Orgmode: Il est vraiment temps de prendre une pause")))
 
-(add-hook 'org-pomodoro-killed-hook
-          '(lambda ()
-             (weblock/toggle 'off)))
+(setq org-show-notification-handler
+      '(lambda (notification)
+         (growl "org-mode notification" notification
+                )))
+
+;(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
+;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+
+;; (require 'weblock)
+
+;; (add-hook 'org-pomodoro-started-hook
+;;           '(lambda ()
+;;              (weblock/toggle 'on)))
+
+;; (add-hook 'org-pomodoro-finished-hook
+;;           '(lambda ()
+;;              (weblock/toggle 'off)))
+
+;; (add-hook 'org-pomodoro-killed-hook
+;;           '(lambda ()
+;;              (weblock/toggle 'off)))
 
 ;; automatically mark a todo headline as done
 ;; when all sub-checkboxes are checked
@@ -35,46 +67,65 @@
 
 ;; sets the default workflow keywords and their faces
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "ENCOURS(n)" "|" "DONE(d!/!)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(o)" "|" "CANCELLED(c@/!)")))
+      '((sequence "TODO(t)" "EN_COURS(e)" "|" "FINI(f!/!)")
+        (sequence "ATTENTE(w@/!)" "SOUTE(h@/!)" "UN_JOUR(j)" "|" "ANNULÉ(a@/!)" "TÉLÉPHONE")))
 
 (setq org-priority-faces
-      '((65 :foreground "#ff7000" :weight bold)
-        (66 :foreground "#ffa060" :weight bold)
-        (67 :foreground "#ffcca8" :weight bold)))
+      '((65 :foreground "#ff2f30" :weight bold)
+        (66 :foreground "#ffaf60" :weight bold)
+        (67 :foreground "#ffdca8" :weight bold)))
 
 (setq org-todo-keyword-faces
-      '(("SOMEDAY"   :foreground "#808080" :weight bold)
-        ("ENCOURS"      :foreground "#e9c062" :weight bold)
-        ("STARTED"   :foreground "#ffff63" :weight bold)
-        ("WAITING"   :foreground "#fd9b3b" :weight bold)
-        ("HOLD"      :foreground "#9b859d" :weight bold)
-        ("CANCELLED" :foreground "#9eb9a7" :weight bold)))
+      '(("UN_JOUR"   :foreground "#c93f80" :weight bold)
+        ("EN_COURS"  :foreground "#2f2ccc" :weight bold)
+        ("ATTENTE"   :foreground "#fd9b3b" :weight bold)
+        ("FINI"      :foreground "#19b85d" :weight bold)
+        ("SOUTE"     :foreground "#afff64" :weight bold)
+        ("ANNULÉ"    :foreground "#b81590" :weight bold)
+        ("TÉLÉPHONE" :foreground "#2eb9a7" :weight bold)
+        ))
 
 ;; sets the
 (setq org-tag-alist '((:startgroup . nil)
                       ("@maision" . ?m)
                       ("@bureau" . ?b)
                       ("@voiture" . ?v)
+                      ("@ferme"   . ?f)
                       (:endgroup . nil)
-                      ("org" . ?o)
-                      ("git" . ?g)
-                      ("prog" . ?p)
+                      ("TÉLÉPHONE" . ?t)
+                      ("ATTENTE" . ?w)
+                      ("SOUTE" . ?h)
+                      ("PERSONAL" . ?P)
+                      ("WORK" . ?W)
+                      ("FERME" . ?F)
+                      ("ORG" . ?O)
+                      ("crypt" . ?c)
+                      ("NOTE" . ?n)
+                      ("ANNULÉ" . ?a)
+                      ("GIT" . ?g)
+                      ("PROG" . ?p)
                       ("en ligne" . ?e)))
 
 ;; The default agenda files. inbox.org is used only in custom agenda.
-(setq org-agenda-files (list "~/Dropbox/GTD/tasks.org"
-                             "~/Dropbox/GTD/tasks.org_archive"
-                             "~/Dropbox/GTD/projects.org"
-                             "~/Dropbox/GTD/projects.org_archive"
-                             "~/Dropbox/GTD/mevents.org"
-                             "~/Dropbox/GTD/mevents.org_archive"
-                             "~/Dropbox/GTD/calendar.org"))
+(setq org-agenda-files (quote ( "~/Dropbox/GTD/gtd.org"
+                               "~/Dropbox/GTD/rdesalis.org"
+                               "~/Dropbox/GTD/journal.org"
+                               "~/Dropbox/GTD/birthdays.org"
+                               "~/Dropbox/GTD/projects.org"
+                               "~/Dropbox/GTD/calendar.org")))
 
 ;; my org settings
+
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+
 (custom-set-variables
  '(org-log-done t)
- '(org-completion-use-ido t)
+ ;; Allows changing form any TODO state to any other using key from fast todo selection
+ '(org-use-fast-todo-selection t)
+ ;; allows chaniging todo states with S-left S-right skipping all normal processing when entering/leaving a TODO state (no settign of timestamps!)
+ '(org-treat-S-cursor-todo-selection-as-state-change nil)
+
  '(org-agenda-start-on-weekday nil)
  '(org-agenda-ndays 1)
  '(org-agenda-include-diary t)
@@ -111,6 +162,10 @@
  '(org-agenda-skip-timestamp-if-done t)
  ;; Show lot sof clocking history so it's easy to pick items off the C-F11 list
  '(org-clock-history-length 36)
+ ;; Change tasks to NEXT when clocking in
+ '(org-clock-in-switch-to-state 'gas/clock-in-to-next)
+ ;; Clock out when moving task to a done state
+ '(org-clock-out-when-done t)
  ;; Separate drawers for clocking and logs
  '(org-drawers (quote ("PROPERTIES" "LOGBOOK")))
  ;; Save clock data and state changes and notes in the LOGBOOK drawer
@@ -118,10 +173,15 @@
  ;; Sometimes I change tasks I'm clocking quickly
  ;; this removes clocked tasks with 0:00 duration
  '(org-clock-out-remove-zero-time-clocks t)
+ ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+ '(org-clock-persist t)
  ;; Do not prompt to resume an active clock
  '(org-clock-persist-query-resume nil)
+ ;; Enable auto clock resolution for finding open clocks
+ '(org-clock-auto-clock-resolution (quote when-no-clock-is-running))
  ;; Include current clocking task in clock reports
  '(org-clock-report-include-clocking-task t)
+ ;; So dont have to press RET to to exit fast tag selection - have to pres C-c to get window
  '(org-fast-tag-selection-single-key 'expert)
  '(org-agenda-skip-scheduled-if-done t)
  ;; Display tags farther right
@@ -131,21 +191,67 @@
  '(org-agenda-time-grid (quote ((daily today remove-match)
                                 #("----------------" 0 16 (org-heading t))
                                 (830 1000 1200 1300 1500 1700))))
+ ;; include diary elements
+ '(org-agenda-include-diary t)
  ;; Do not dim blocked tasks
  '(org-agenda-dim-blocked-tasks nil))
 
 
-(setq org-refile-targets '(("~/Dropbox/GTD/tasks.org" :level . 1)
-                           ("~/Dropbox/GTD/projects.org" :level . 1)
-                           ("~/Dropbox/GTD/references.org" :level . 1)
-                           ("~/Dropbox/GTD/mevents.org" :level . 1)))
+;; setup for org-capture
+(setq org-directory "~/Dropbox/GTD")
+(setq org-default-notes-file "~/Dropbox/GTD/refile.org")
 
-(setq org-capture-templates
-      '(("r" "Todo" entry (file+headline "~/Dropbox/GTD/inbox.org" "Inbox")
-         "* TODO %?")
-        ("j" "Journal" entry (file+datetree "~/Dropbox/GTD/journal.org")
-         (file "~/Dropbox/GTD/templates/review"))))
+;; I use C-M-r to start capture mode
+(global-set-key (kbd "C-M-r") 'org-capture)
 
+(setq org-capture-templates%
+      '(("t" "todo" entry (file "~/Dropbox/GTD/refile.org")
+         "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+        ("r" "respond" entry (file "~/Dropbox/GTD/refile.org")
+         "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+        ("n" "note" entry (file "~/Dropbox/GTD/refile.org")
+         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+        ("j" "Journal" entry (file+datetree "~/Dropbox/GTD/calendar.org")
+         "* %?\n%U\n" :clock-in t :clock-resume t)
+        ("w" "org-protocol" entry (file "~/Dropbox/GTD/refile.org")
+         "* TODO Review %c\n%U\n" :immediate-finish t)
+        ("p" "Phone call" entry (file "~/Dropbox/GTD/refile.org")
+         "* TÉLÉPHONE %? :TÉLÉPHONE:\n%U" :clock-in t :clock-resume t)
+        ("h" "Habit" entry (file "~/Dropbox/GTD/refile.org")
+                        "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a .+1d/3d>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
+
+;; refiling
+;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+(setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+
+; Use full outline paths for refile targets - we file directly with IDO
+(setq org-refile-use-outline-path t)
+
+; Targets complete directly with IDO
+(setq org-outline-path-complete-in-steps nil)
+
+; Allow refile to create parent tasks with confirmation
+(setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+; Use IDO for both buffer and file completion and ido-everywhere to t
+(setq org-completion-use-ido t)
+(setq ido-everywhere t)
+(setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+; Use the current window when visiting files and buffers with ido
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+
+;;;; Refile settings
+; Exclude FINI state tasks from refile targets
+(defun bh/verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets"
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+(setq org-refile-target-verify-function 'bh/verify-refile-target)
+
+;;
 (define-key global-map "\C-cr"
   (lambda () (interactive) (org-capture nil "r")))
 (define-key global-map "\C-cj"
@@ -166,8 +272,9 @@
   (org-defkey org-agenda-mode-map "q" 'bury-buffer)
   (org-defkey org-agenda-mode-map "I" 'org-pomodoro)
   (org-defkey org-agenda-mode-map "O" 'org-pomodoro)
-  (org-defkey org-agenda-mode-map (kbd "C-c C-x C-i") 'org-pomodoro)
-  (org-defkey org-agenda-mode-map (kbd "C-c C-x C-o") 'org-pomodoro))
+ ; (org-defkey org-agenda-mode-map (kbd "C-c C-x C-i") 'org-pomodoro)
+ ; (org-defkey org-agenda-mode-map (kbd "C-c C-x C-o") 'org-pomodoro)
+  )
 
 (add-hook 'org-agenda-mode-hook 'custom-org-agenda-mode-defaults 'append)
 
@@ -178,16 +285,19 @@
 
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
-      '(("a" "Agenda"
+      '((" " "Agenda"
          ((agenda "" nil)
-          (tags-todo "-CANCELLED/!-HOLD-WAITING"
+          (tags "REFILE"
+                ((org-agenda-overriding-header "Remanier les Tâches")
+                 (org-tags-match-list-sublevels nil)))
+          (tags-todo "-ANNULÉ/!-SOUTE-ATTENTE"
                      ((org-agenda-overriding-header "Projets Bloquès")
                       (org-agenda-skip-function
                        '(oh/agenda-skip :headline-if '(non-project)
                                         :subtree-if '(inactive habit scheduled deadline)
                                         :headline-if-restricted-and '(non-stuck-project)
                                         :subtree-if-unrestricted-and '(non-stuck-project)))))
-          (tags-todo "-WAITING-CANCELLED/!ENCOURS"
+          (tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
                      ((org-agenda-overriding-header "Tâches Suivant")
                       (org-agenda-skip-function
                        '(oh/agenda-skip :headline-if '(project)
@@ -196,7 +306,7 @@
                                         :subtree-if-restricted-and '(single-task)))
                       (org-tags-match-list-sublevels t)
                       (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
-          (tags-todo "-CANCELLED/!-ENCOURS-HOLD-WAITING"
+          (tags-todo "-ANNULÉ/!-EN_COURS-SOUTE-ATTENTE"
                      ((org-agenda-overriding-header "Tâches Actif")
                       (org-agenda-skip-function
                        '(oh/agenda-skip :headline-if '(project)
@@ -204,33 +314,37 @@
                                         :subtree-if-unrestricted-and '(subtask)
                                         :subtree-if-restricted-and '(single-task)))
                       (org-agenda-sorting-strategy '(category-keep))))
-          (tags-todo "-CANCELLED/!"
+          (tags-todo "-ANNULÉ/!"
                      ((org-agenda-overriding-header "Les Projets actuellement actifs")
                       (org-agenda-skip-function
                        '(oh/agenda-skip :subtree-if '(non-project stuck-project inactive habit)
                                         :headline-if-unrestricted-and '(subproject)
                                         :headline-if-restricted-and '(top-project)))
                       (org-agenda-sorting-strategy '(category-keep))))
-          (tags-todo "-CANCELLED/!WAITING|HOLD"
+          (tags-todo "-ANNULÉ/!ATTENTE|SOUTE"
                      ((org-agenda-overriding-header "D'attente et reporté tâches")
                       (org-agenda-skip-function
-                       '(oh/agenda-skip :subtree-if '(project habit))))))
+                       '(oh/agenda-skip :subtree-if '(project habit)))))
+          (tags "-REFILE/"
+                ((org-agenda-overriding-header "Tasks to Archive")
+                 (org-agenda-skip-function 'gas/skip-non-archivable-tasks)
+                                        (org-tags-match-list-sublevels nil))))
          nil)
         ("r" "Tasks to Refile" alltodo ""
          ((org-agenda-overriding-header "Tasks to Refile")
-          (org-agenda-files '("~/Dropbox/GTD/inbox.org"))))
-        ("#" "Stuck Projects" tags-todo "-CANCELLED/!-HOLD-WAITING"
+          (org-agenda-files '("~/Dropbox/GTD/refile.org"))))
+        ("#" "Stuck Projects" tags-todo "-ANNULÉ/!-SOUTE-ATTENTE"
          ((org-agenda-overriding-header "Projets Bloqués")
           (org-agenda-skip-function
            '(oh/agenda-skip :subtree-if '(inactive non-project non-stuck-project
                                           habit scheduled deadline)))))
-        ("n" "Next Tasks" tags-todo "-WAITING-CANCELLED/!ENCOURS"
+        ("n" "Next Tasks" tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
          ((org-agenda-overriding-header "Tâches Suivant")
           (org-agenda-skip-function
            '(oh/agenda-skip :subtree-if '(inactive project habit scheduled deadline)))
           (org-tags-match-list-sublevels t)
           (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
-        ("R" "Tasks" tags-todo "-CANCELLED/!-ENCOURS-HOLD-WAITING"
+        ("R" "Tasks" tags-todo "-ANNULÉ/!-EN_COURS-SOUTE-ATTENTE"
          ((org-agenda-overriding-header "Tâches Actif")
           (org-agenda-skip-function
            '(oh/agenda-skip :headline-if '(project)
@@ -238,23 +352,35 @@
                             :subtree-if-unrestricted-and '(subtask)
                             :subtree-if-restricted-and '(single-task)))
           (org-agenda-sorting-strategy '(category-keep))))
-        ("p" "Projects" tags-todo "-CANCELLED/!"
+        ("p" "Projects" tags-todo "-ANNULÉ/!"
          ((org-agenda-overriding-header "Les Projets actuellement actifs")
           (org-agenda-skip-function
            '(oh/agenda-skip :subtree-if '(non-project inactive habit)))
           (org-agenda-sorting-strategy '(category-keep))
           (org-tags-match-list-sublevels 'indented)))
-        ("w" "Waiting Tasks" tags-todo "-CANCELLED/!WAITING|HOLD"
+        ("w" "Waiting Tasks" tags-todo "-ANNULÉ/!ATTENTE|SOUTE"
          ((org-agenda-overriding-header "Waiting and Postponed Tasks")
           (org-agenda-skip-function '(oh/agenda-skip :subtree-if '(project habit)))))))
 
+;;Archivable defaults
+(setq org-archive-mark-done nil)
+(setq org-archive-location "%s_archive::* Archived Tasks")
+
+;; Estimates
+ ; Set default column view headings: Task Effort Clock_Summary
+(setq org-columns-default-format "%80ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM")
+; global Effort estimate values
+; global STYLE property values for completion
+(setq org-global-properties (quote (("Effort_ALL" . "0:25 0:50 1:15 1:40 2:05 2:30 2:55 3:20 3:45 4:10")
+                                                                        ("STYLE_ALL" . "habit"))))
 
 (defun custom-org-mode-defaults ()
   (electric-indent-mode -1)
   (org-defkey org-mode-map (kbd "M-p") 'org-metaup)
   (org-defkey org-mode-map (kbd "M-n") 'org-metadown)
-  (org-defkey org-mode-map (kbd "C-c C-x C-i") 'org-pomodoro)
-  (org-defkey org-mode-map (kbd "C-c C-x C-o") 'org-pomodoro))
+ ; (org-defkey org-mode-map (kbd "C-c C-x C-i") 'org-pomodoro)
+ ; (org-defkey org-mode-map (kbd "C-c C-x C-o") 'org-pomodoro)
+  )
 
 
 (add-hook 'org-mode-hook 'custom-org-mode-defaults)
