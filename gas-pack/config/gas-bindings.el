@@ -1,4 +1,4 @@
-;;Time-stamp: <2013-02-28 20:51:08 agasson>
+;;Time-stamp: <2013-03-05 09:37:21 agasson>
 
 ;;(define-key global-map (kbd "M-3") (lambda () (interactive) (insert "#")))
 
@@ -38,3 +38,5 @@
 ;;(define-key <f11> 'org-clock-goto)
 ;;(define-key (kbd "\C") f11 'org-clock-in)
 ;;(define-key (kbd "\M" )f11 'org-resolve-clocks)
+;; switch to ERC with Ctrl+c e
+(global-set-key (kbd "C-c e") 'gas-erc-start-or-switch) ;; ERC
