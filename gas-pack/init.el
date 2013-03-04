@@ -2,6 +2,7 @@
 ;; Time-Stamp: <>
 ;; Load bindings config
 (live-load-config-file "clean-mode-line.el")
+(live-load-config-file "secrets.el")
 (live-load-config-file "gas-org.el")
 ;;(live-load-config-file "gas-mobileorg.el")
 (live-load-config-file "gas-irc.el")
@@ -9,9 +10,10 @@
 (live-load-config-file "gas-bindings.el")
 (live-load-config-file "gas-spell.el")
 
-;; Load alerts
-;(live-add-pack-lib "sauron")
-;(require 'sauron)
+
+;; Load sauron
+(live-add-pack-lib "sauron")
+(require 'sauron)
 
 ;; Load alerts
 ;(live-add-pack-lib "alert")

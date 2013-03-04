@@ -108,11 +108,12 @@
 
 ;; The default agenda files. inbox.org is used only in custom agenda.
 (setq org-agenda-files (quote ( "~/Dropbox/GTD/gtd.org"
-                               "~/Dropbox/GTD/rdesalis.org"
-                               "~/Dropbox/GTD/journal.org"
-                               "~/Dropbox/GTD/birthdays.org"
-                               "~/Dropbox/GTD/projects.org"
-                               "~/Dropbox/GTD/calendar.org")))
+                                "~/Dropbox/GTD/rdesalis/rdesalis.org"
+                                "~/Dropbox/GTD/gbell/gbell.org"
+                                "~/Dropbox/GTD/journal.org"
+                                "~/Dropbox/GTD/birthdays.org"
+                                "~/Dropbox/GTD/projects.org"
+                                "~/Dropbox/GTD/calendar.org")))
 
 ;; my org settings
 
