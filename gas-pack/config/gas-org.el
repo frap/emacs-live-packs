@@ -21,31 +21,10 @@
 (global-set-key (kbd "<f2>") 'org-clock-goto)
 (global-set-key (kbd "C-<f2>") 'org-clock-in)
 
-(defvar growl-program "growlnotify")
-
-(defun growl (title message)
-  (start-process "growl" " growl"
-                 growl-program
-                 title
-                 "-a" "Emacs")
-  (process-send-string " growl" message)
-  (process-send-string " growl" "\n")
-  (process-send-eof " growl"))
-
-(add-to-list 'org-modules 'org-timer)
-(setq org-timer-default-timer 25)
-(add-hook 'org-clock-in-hook '(lambda ()  (if (not org-timer-current-timer)
-                                              (org-timer-set-timer '(16)))))
-(add-hook 'org-clock-out-hook '(lambda ()  (setq org-mode-line-string nil) (growl "Clock Out" "¡Has terminado!")))
-(add-hook 'org-timer-done-hook '(lambda () (growl "Pomodoro Done"  "Orgmode: Il est vraiment temps de prendre une pause")))
-
-(setq org-show-notification-handler
-      '(lambda (notification)
-         (growl "org-mode notification" notification
-                )))
-
-;(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
-;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+;(require 'pomodoro)
+;(pomodoro-add-to-mode-line)
+;(global-set-key (kbd "C-c C-x C-p") 'pomodoro-start)
+(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
 
 ;; (require 'weblock)
 

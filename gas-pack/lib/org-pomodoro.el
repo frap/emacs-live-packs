@@ -5,8 +5,45 @@
 
 (require 'timer)
 (require 'org)
-(require 'org-timer)
-(require 'notify)
+;(require 'org-timer)
+
+(defvar growl-program "growlnotify")
+
+(defun growl (title message)
+  (start-process "growl" " growl"
+                 growl-program
+                 title
+                 "-a" "Emacs")
+  (process-send-string " growl" message)
+  (process-send-string " growl" "\n")
+  (process-send-eof " growl"))
+
+(add-to-list 'org-modules 'org-timer)
+
+;(setq org-timer-default-timer 25)
+;---- [ `org-timer-set-timer': new prefix argument.]
+; Called with a numeric prefix argument, `org-timer-set-timer' uses
+; this numeric value as the duration of the timer.
+;
+; Called with a `C-u' prefix '(4) argument, use `org-timer-default-timer'
+; without prompting the user for a duration.
+;
+; With two `C-u' prefix '(16) arguments, use `org-timer-default-timer'
+; without prompting the user for a duration and automatically
+; replace any running timer.
+;----
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (add-hook 'org-clock-in-hook '(lambda ()  (if (not org-timer-current-timer)                                                 ;;
+;;                                               (org-timer-set-timer '(16)))))                                                ;;
+;; (add-hook 'org-clock-out-hook '(lambda ()  (setq org-mode-line-string nil) (growl "Clock Out" "¡Has terminado!")))          ;;
+;; (add-hook 'org-timer-done-hook '(lambda () (growl "Pomodoro Done"  "Orgmode: Il est vraiment temps de prendre une pause"))) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq org-show-notification-handler
+      '(lambda (notification)
+         (growl "org-mode notification" notification
+                )))
+
 
 (defgroup org-pomodoro nil
   "Org pomodoro customization"
@@ -36,31 +73,32 @@ a pomodoro and to :longbreak or :break when starting a break.")
   "Determines whether sounds are played or not.")
 
 ;; POMODORO VALUES
-(defvar org-pomodoro-length 25
+(defcustom org-pomodoro-length 25
   "The length of a pomodoro in minutes.")
 
-(defvar org-pomodoro-format "Pomodoro~%s"
-  "The format of the mode line string during a long break.")
+(defcustom org-pomodoro-format "Pomodoro~%s"
+  "The format of the mode line string during a Pomodoro.")
 
 (defvar org-pomodoro-sound
   (concat (file-name-directory load-file-name)
           "/resources/bell.wav")
   "The path to a sound file that´s to be played when a pomodoro was finished.")
 
-(defvar org-pomodoro-killed-sound nil
+(defcustom org-pomodoro-killed-sound
+  (expand-file-name "~/Music/sounds/tos-redalert.mp3")
   "The path to a sound file, that´s to be played when a pomodoro is killed.")
 
 ;; SHORT BREAK VALUES
-(defvar org-pomodoro-short-break-length 5
+(defcustom org-pomodoro-short-break-length 5
   "The length of a break in minutes.")
 
-(defvar org-pomodoro-short-break-format "Short Break~%s"
-  "The format of the mode line string during a long break.")
+(defcustom org-pomodoro-short-break-format "Short Break~%s"
+  "The format of the mode line string during a short break.")
 
-(defvar org-pomodoro-short-break-sound
+(defcustom org-pomodoro-short-break-sound
   (concat (file-name-directory load-file-name)
-          "/resources/violence.wav")
-  "The path to a sound file that´s to be played when a break was finished.")
+          "resources/ScreechingBrake")
+  "The path to a sound file that´s to be played when a shortbreak is finished.")
 
 ;; LONG BREAK VALUES
 (defvar org-pomodoro-long-break-length 20
@@ -71,7 +109,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defvar org-pomodoro-long-break-sound
   (concat (file-name-directory load-file-name)
-          "/resources/bell_multiple.wav")
+          "/resources/Clapping")
   "The path to a sound file that´s to be played when a long break is finished.")
 
 
@@ -90,25 +128,13 @@ a pomodoro and to :longbreak or :break when starting a break.")
   :group 'faces)
 
 
-(setq tea-time-sound-command "afplay %s")
-(setq org-pomodoro-sox-cmd "sox %s -d")
-
-(defun tea-time-play-sound ()
-  "Play sound"
-  (if tea-time-sound
-      (if tea-time-sound-command
-          (start-process-shell-command "tea-ready" nil (format tea-time-sound-command tea-time-sound))
-        (play-sound-file tea-time-sound))
-    (progn (beep t) (beep t)))
+(defvar org-pomodoro-sound-player "/opt/local/bin/sox"
+  "Music player used to play sounds"
   )
 
-
 (defun org-pomodoro-play-sox (sound)
-  (start-process-shell-command "sox" nil (format org-pomodoro-sox-cmd sound)) )
+  (start-process "pomodoro-sox" nil org-pomodoro-sound-player (expand-file-name sound) "-d") )
 
-(defcustom org-pomodoro-sound-player "/usr/bin/afplay"
-  "Music player used to play sounds"
-)
 
 (defun org-pomodoro-play-sound (sound)
   "Plays a sound."
@@ -204,10 +230,10 @@ notification, play a sound and start a pomodoro break."
   (setq org-pomodoro-count (+ org-pomodoro-count 1))
   (if (> org-pomodoro-count org-pomodoro-long-break-frequency)
       (progn
-        (notify "Pomodoro finished" "Pomodoro completed! Time for a long break.")
+        (growl "4 Pomodoro's finished" "Pomodoro completed! Time for a long break.")
         (org-pomodoro-start :long-break))
     (progn
-      (notify "Pomodoro finished" "Pomodoro completed! Time for a short break.")
+      (growl "Pomodoro fini" "Pomodoro completed! Time for a short break.")
       (org-pomodoro-start :short-break)))
   (run-hooks 'org-pomodoro-finished-hook)
   (org-pomodoro-update-mode-line))
@@ -216,7 +242,7 @@ notification, play a sound and start a pomodoro break."
 (defun org-pomodoro-killed ()
   "Is invoked when a pomodoro was killed. This may send a notification,
 play a sound and adds log."
-  (notify "Pomodoro killed" "One does not simply kill a pomodoro!")
+  (growl "Pomodoro killed" "One does not simply kill a pomodoro!")
 ;  (org-clock-cancel)
   (org-pomodoro-reset)
   (run-hooks 'org-pomodoro-killed-hook)
@@ -226,7 +252,7 @@ play a sound and adds log."
 (defun org-pomodoro-short-break-finished ()
   "Is invoked when a break is finished. This may send a notification and play
 a sound."
-  (notify "Break finished" "Short break finished. Ready for another pomodoro?")
+  (growl "GET TO WORK"  "Short break finished. Ready for another pomodoro?")
   (org-pomodoro-play-sound org-pomodoro-short-break-sound)
   (org-pomodoro-reset))
 
@@ -234,7 +260,7 @@ a sound."
 (defun org-pomodoro-long-break-finished ()
   "Is invoked when a long break is finished. This may send a notification
 and play a sound."
-  (notify "Break finished" "Long break finished. Ready for another pomodoro?")
+  (growl "Break finished" "Long break finished. Ready for another pomodoro?")
   (org-pomodoro-play-sound org-pomodoro-long-break-sound)
   (setq org-pomodoro-count 0)
   (org-pomodoro-reset))
@@ -261,6 +287,7 @@ kill the current timer, this may be a break or a running pomodoro."
         (org-pomodoro-start :pomodoro))
     (if (y-or-n-p "There is already a running timer. Would You like to stop it?")
         (org-pomodoro-kill)
+      (org-clock-out)
       (message "Alright, keep up the good work!"))))
 
 
