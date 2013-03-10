@@ -79,13 +79,20 @@ a pomodoro and to :longbreak or :break when starting a break.")
 (defcustom org-pomodoro-format "Pomodoro~%s"
   "The format of the mode line string during a Pomodoro.")
 
-(defvar org-pomodoro-sound
+(defvar org-pomodoro-start-sound
   (concat (file-name-directory load-file-name)
-          "/resources/bell.wav")
-  "The path to a sound file that´s to be played when a pomodoro was finished.")
+          "/resources/Gunshot")
+  "The path to a sound file that´s to be played when a pomodoro is finished.")
+
+(defvar org-pomodoro-finish-sound
+  (concat (file-name-directory load-file-name)
+          "/resources/Clapping")
+  "The path to a sound file that´s to be played when a pomodoro is finished.")
 
 (defcustom org-pomodoro-killed-sound
-  (expand-file-name "~/Music/sounds/tos-redalert.mp3")
+                                        ;  (expand-file-name "~/Music/sounds/tos-redalert.mp3")
+  (concat (file-name-directory load-file-name)
+          "/resources/tos-redalert.mp3")
   "The path to a sound file, that´s to be played when a pomodoro is killed.")
 
 ;; SHORT BREAK VALUES
@@ -97,7 +104,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defcustom org-pomodoro-short-break-sound
   (concat (file-name-directory load-file-name)
-          "resources/ScreechingBrake")
+          "/resources/ScreechingBrake")
   "The path to a sound file that´s to be played when a shortbreak is finished.")
 
 ;; LONG BREAK VALUES
@@ -109,7 +116,7 @@ a pomodoro and to :longbreak or :break when starting a break.")
 
 (defvar org-pomodoro-long-break-sound
   (concat (file-name-directory load-file-name)
-          "/resources/Clapping")
+          "/resources/black-knight.ogg")
   "The path to a sound file that´s to be played when a long break is finished.")
 
 
@@ -226,7 +233,7 @@ The default state is `:pomodoro`."
   "Is invoked when a pomodoro was finished successfully. This may send a
 notification, play a sound and start a pomodoro break."
   (org-clock-out)
-  (org-pomodoro-play-sound org-pomodoro-sound)
+  (org-pomodoro-play-sound org-pomodoro-finish-sound)
   (setq org-pomodoro-count (+ org-pomodoro-count 1))
   (if (> org-pomodoro-count org-pomodoro-long-break-frequency)
       (progn
@@ -284,7 +291,8 @@ kill the current timer, this may be a break or a running pomodoro."
             (call-interactively 'org-clock-in)))
          (t (let ((current-prefix-arg '(4)))
               (call-interactively 'org-clock-in))))
-        (org-pomodoro-start :pomodoro))
+        (org-pomodoro-start :pomodoro)
+        (org-pomodoro-play-sound org-pomodoro-start-sound))
     (if (y-or-n-p "There is already a running timer. Would You like to stop it?")
         (org-pomodoro-kill)
       (org-clock-out)
