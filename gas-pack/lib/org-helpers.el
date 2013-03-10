@@ -172,7 +172,7 @@ have parent headings that are of those given todo states."
   (save-excursion
     (let ((is-inactive (member (org-get-todo-state) '("UN_JOUR" "SOUTE" "ATTENTE" "ANNULÉ" "FINI"))))
       (while (and (not is-inactive) (org-up-heading-safe))
-        (when (member (org-get-todo-state) '("SOMEDAY" "SOUTE" "ATTENTE" "ANNULÉ" "FINI"))
+        (when (member (org-get-todo-state) '("UN_JOUR" "SOUTE" "ATTENTE" "ANNULÉ" "FINI"))
           (setq is-inactive t)))
       is-inactive)))
 

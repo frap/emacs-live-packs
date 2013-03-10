@@ -24,7 +24,7 @@
 ;(require 'pomodoro)
 ;(pomodoro-add-to-mode-line)
 ;(global-set-key (kbd "C-c C-x C-p") 'pomodoro-start)
-(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
 
 ;; (require 'weblock)
 
@@ -108,8 +108,7 @@
 
  '(org-agenda-start-on-weekday nil)
  '(org-agenda-ndays 1)
- '(org-agenda-include-diary t)
- '(org-agenda-window-setup 'current-window)
+  '(org-agenda-window-setup 'current-window)
  '(org-agenda-repeating-timestamp-show-all t)
  ;; Show all agenda dates - even if they are empty
  '(org-agenda-show-all-dates t)
@@ -231,11 +230,13 @@
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
-;;
-(define-key global-map "\C-cr"
-  (lambda () (interactive) (org-capture nil "r")))
-(define-key global-map "\C-cj"
-  (lambda () (interactive) (org-capture nil "j")))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;                                                 ;;
+;; (define-key global-map "\C-cr"                     ;;
+;;   (lambda () (interactive) (org-capture nil "r"))) ;;
+;; (define-key global-map "\C-cj"                     ;;
+;;   (lambda () (interactive) (org-capture nil "j"))) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Resume clocking task when emacs is restarted
 (org-clock-persistence-insinuate)
@@ -285,7 +286,16 @@
                                         :subtree-if-unrestricted-and '(subtask)
                                         :subtree-if-restricted-and '(single-task)))
                       (org-tags-match-list-sublevels t)
-                      (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep))))
+                      (org-agenda-sorting-strategy '(todo-state-down priority-up effort-up category-keep))))
+          (tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
+                     ((org-agenda-overriding-header "Tâches Suivant 2")
+                      (org-agenda-skip-function
+                       '(oh/agenda-skip
+                                        :subtree-if '(inactive habit scheduled deadline)
+                                        :subtree-if-unrestricted-and '(subtask)
+                                        :subtree-if-restricted-and '(single-task)))
+                      (org-tags-match-list-sublevels t)
+                      (org-agenda-sorting-strategy '(todo-state-down priority-up effort-up category-keep))))
           (tags-todo "-ANNULÉ/!-EN_COURS-SOUTE-ATTENTE"
                      ((org-agenda-overriding-header "Tâches Actif")
                       (org-agenda-skip-function
