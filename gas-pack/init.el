@@ -1,6 +1,11 @@
 ;; Gas pack
-;; Time-Stamp: <>
+;; Time-stamp: <2013-03-14 14:31:45 agasson>
 ;; Load bindings config
+
+;; Time-stamp hook for saving alst file saved time
+(setq time-stamp-pattern nil)
+(add-hook 'before-save-hook 'time-stamp)
+
 (live-load-config-file "clean-mode-line.el")
 (live-load-config-file "secrets.el")
 (live-load-config-file "gas-org.el")
