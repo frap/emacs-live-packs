@@ -277,25 +277,16 @@
                        '(oh/agenda-skip :headline-if '(non-project)
                                         :subtree-if '(inactive habit scheduled deadline)
                                         :headline-if-restricted-and '(non-stuck-project)
-                                        :subtree-if-unrestricted-and '(non-stuck-project)))))
+                                        :subtree-if-unrestricted-and '(non-stuck-project)))
+                      (org-agenda-sorting-strategy '(effort-down))))
           (tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
                      ((org-agenda-overriding-header "Tâches Suivant")
                       (org-agenda-skip-function
-                       '(oh/agenda-skip :headline-if '(project)
-                                        :subtree-if '(inactive habit scheduled deadline)
-                                        :subtree-if-unrestricted-and '(subtask)
-                                        :subtree-if-restricted-and '(single-task)))
-                      (org-tags-match-list-sublevels t)
-                      (org-agenda-sorting-strategy '(todo-state-down priority-up effort-up category-keep))))
-          (tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
-                     ((org-agenda-overriding-header "Tâches Suivant 2")
-                      (org-agenda-skip-function
                        '(oh/agenda-skip
                                         :subtree-if '(inactive habit scheduled deadline)
-                                        :subtree-if-unrestricted-and '(subtask)
-                                        :subtree-if-restricted-and '(single-task)))
+                                        ))
                       (org-tags-match-list-sublevels t)
-                      (org-agenda-sorting-strategy '(todo-state-down priority-up effort-up category-keep))))
+                      (org-agenda-sorting-strategy '(priority-down effort-down))))
           (tags-todo "-ANNULÉ/!-EN_COURS-SOUTE-ATTENTE"
                      ((org-agenda-overriding-header "Tâches Actif")
                       (org-agenda-skip-function
@@ -303,14 +294,14 @@
                                         :subtree-if '(inactive habit scheduled deadline)
                                         :subtree-if-unrestricted-and '(subtask)
                                         :subtree-if-restricted-and '(single-task)))
-                      (org-agenda-sorting-strategy '(category-keep))))
+                      (org-agenda-sorting-strategy '(priority-down))))
           (tags-todo "-ANNULÉ/!"
                      ((org-agenda-overriding-header "Les Projets actuellement actifs")
                       (org-agenda-skip-function
                        '(oh/agenda-skip :subtree-if '(non-project stuck-project inactive habit)
                                         :headline-if-unrestricted-and '(subproject)
                                         :headline-if-restricted-and '(top-project)))
-                      (org-agenda-sorting-strategy '(category-keep))))
+                      (org-agenda-sorting-strategy '(priority-down))))
           (tags-todo "-ANNULÉ/!ATTENTE|SOUTE"
                      ((org-agenda-overriding-header "D'attente et reporté tâches")
                       (org-agenda-skip-function
@@ -341,7 +332,7 @@
                             :subtree-if '(inactive habit scheduled deadline)
                             :subtree-if-unrestricted-and '(subtask)
                             :subtree-if-restricted-and '(single-task)))
-          (org-agenda-sorting-strategy '(category-keep))))
+          (org-agenda-sorting-strategy '(priority-up category-keep))))
         ("p" "Projects" tags-todo "-ANNULÉ/!"
          ((org-agenda-overriding-header "Les Projets actuellement actifs")
           (org-agenda-skip-function
