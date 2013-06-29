@@ -121,8 +121,8 @@
             priority-down
             effort-up
             category-keep)
-           (todo category-up priority-down effort-up)
-           (tags category-up priority-down effort-up)
+           (todo priority-down category-up effort-up)
+           (tags priority-down effort-up category-up)
            (search category-up))))
  '(org-agenda-cmp-user-defined 'oh/agenda-sort)
  ;; Keep tasks with dates on the global todo lists
@@ -278,7 +278,7 @@
                                         :subtree-if '(inactive habit scheduled deadline)
                                         :headline-if-restricted-and '(non-stuck-project)
                                         :subtree-if-unrestricted-and '(non-stuck-project)))
-                      (org-agenda-sorting-strategy '(effort-down))))
+                      (org-agenda-sorting-strategy '(priority-down effort-down))))
           (tags-todo "-ATTENTE-ANNULÉ/!EN_COURS"
                      ((org-agenda-overriding-header "Tâches Suivant")
                       (org-agenda-skip-function
@@ -286,7 +286,7 @@
                                         :subtree-if '(inactive habit scheduled deadline)
                                         ))
                       (org-tags-match-list-sublevels t)
-                      (org-agenda-sorting-strategy '(priority-down effort-down))))
+                      (org-agenda-sorting-strategy '(priority-down effort-up))))
           (tags-todo "-ANNULÉ/!-EN_COURS-SOUTE-ATTENTE"
                      ((org-agenda-overriding-header "Tâches Actif")
                       (org-agenda-skip-function
@@ -294,7 +294,7 @@
                                         :subtree-if '(inactive habit scheduled deadline)
                                         :subtree-if-unrestricted-and '(subtask)
                                         :subtree-if-restricted-and '(single-task)))
-                      (org-agenda-sorting-strategy '(priority-down))))
+                      (org-agenda-sorting-strategy '(priority-down effort-down))))
           (tags-todo "-ANNULÉ/!"
                      ((org-agenda-overriding-header "Les Projets actuellement actifs")
                       (org-agenda-skip-function
