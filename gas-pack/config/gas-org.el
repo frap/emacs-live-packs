@@ -10,6 +10,7 @@
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c b") 'org-iswitchb)
 
+
 (require 'org-habit)
 (require 'org-helpers)
 
@@ -39,6 +40,17 @@
 ;; (add-hook 'org-pomodoro-killed-hook
 ;;           '(lambda ()
 ;;              (weblock/toggle 'off)))
+
+(setq org-link-abbrev-alist
+       '(("bugzilla"  . "http://10.1.2.9/bugzilla/show_bug.cgi?id=")
+         ("url-to-ja" . "http://translate.google.fr/translate?sl=en&tl=ja&u=%h")
+         ("google"    . "http://www.google.com/search?q=")
+         ("gmap"      . "http://maps.google.com/maps?q=%s")
+         ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")
+         ("ads"       . "http://adsabs.harvard.edu/cgi-bin/nph-abs_connect?author=%s&db_key=AST")
+         ("ghub"      : "http://github.com/%s")
+         ("ghub-pages" : "http://%s.github.io")
+         ))
 
 ;; automatically mark a todo headline as done
 ;; when all sub-checkboxes are checked
