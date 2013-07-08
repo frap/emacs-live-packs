@@ -1,6 +1,3 @@
-[submodule "gas-pack/lib/sauron"]
-	path = gas-pack/lib/sauron
-	url = https://github.com/djcb/sauron.git
 [submodule "gas-pack/lib/ctable"]
 	path = gas-pack/lib/ctable
 	url = https://github.com/kiwanami/emacs-ctable.git
