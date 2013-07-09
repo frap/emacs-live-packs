@@ -4,3 +4,6 @@
 [submodule "agasson-pack/lib/ctable"]
 	path = agasson-pack/lib/ctable
 	url = https://github.com/kiwanami/emacs-ctable
+[submodule "org-octopress-pack"]
+	path = org-octopress-pack
+	url = https://github.com/frap/org-octopress-pack
