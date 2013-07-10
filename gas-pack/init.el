@@ -1,5 +1,5 @@
 ;; Gas pack
-;; Time-stamp: <2013-03-14 14:31:45 agasson>
+;; Time-stamp: <2013-07-10 15:30:58 agasson>
 ;; Load bindings config
 
 ;; Time-stamp hook for saving alst file saved time
