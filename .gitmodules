@@ -7,3 +7,6 @@
 [submodule "org-octopress-pack"]
 	path = org-octopress-pack
 	url = https://github.com/frap/org-octopress-pack
+[submodule "org-gtd-pack"]
+	path = org-gtd-pack
+	url = https://github.com/frap/org-gtd-pack
