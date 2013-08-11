@@ -1,9 +1,5 @@
 ;; Gas pack
-<<<<<<< HEAD:gas-pack/init.el
 ;; Time-stamp: <2013-07-10 15:30:58 agasson>
-=======
-;; Time-stamp: <2013-06-29 09:36:31 agasson>
->>>>>>> 6757a5a493d98d24802b7895edaafe5e2131627e:agasson-pack/init.el
 ;; Load bindings config
 
 (require 'package)
