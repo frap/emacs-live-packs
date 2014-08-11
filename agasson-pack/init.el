@@ -1,5 +1,5 @@
 ;; Gas pack
-;; Time-stamp: <2013-07-10 15:30:58 agasson>
+;; Time-stamp: <2014-08-08 10:22:44 agasson>
 ;; Load bindings config
 
 (require 'package)
@@ -31,7 +31,6 @@
 
 (live-load-config-file "clean-mode-line.el")
 (live-load-config-file "secrets.el")
-(live-load-config-file "gas-org.el")
 ;;(live-load-config-file "gas-mobileorg.el")
 (live-load-config-file "gas-irc.el")
 (live-load-config-file "gas-sauron.el")
@@ -45,9 +44,6 @@
 (live-add-pack-lib "sauron")
 (require 'sauron)
 
-;; Load alerts
-;(live-add-pack-lib "alert")
-;(require 'alert)
 
 ;(defvar alert-default-style 'growl)
 ;(alert "This is an debugalert" :title "My Alert" :category 'debug)

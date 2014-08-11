@@ -1,4 +1,4 @@
-;;Time-stamp: <2013-03-05 09:37:21 agasson>
+;;Time-stamp: <2014-08-08 10:08:07 agasson>
 
 ;;(define-key global-map (kbd "M-3") (lambda () (interactive) (insert "#")))
 
@@ -12,20 +12,13 @@
 ;;Setup update of timestamp on file change - 1st eight lines of file : Time-stamp: <>
 (add-hook 'before-save-hook 'time-stamp)
 
-;; Org Gas Standard key bindings
-
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
-(global-set-key "\C-cc" 'org-capture)
-
 ;;(define-prefix-command 'f9)
 ;;(define-prefix-command 'f11)
 ;;(global-set-key (kbd "\C-cI")   'bh/punch-in)
 ;;(global-set-key (kbd "\C-cO")   'bh/punch-out)
 ;;(global-set-key (kbd "\C-c SPC") 'bh/clock-in-last-task)
-(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
-;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+;;(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
+;;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
 
 
 ;;(global-set-key (kbd (f9)) 'org-clock-goto)
