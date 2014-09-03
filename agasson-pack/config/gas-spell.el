@@ -1,5 +1,5 @@
 ;; flyspell
-      (setq-default ispell-program-name "/usr/local/bin/aspell")
+      (setq-default ispell-program-name "/usr/bin/aspell")
 
 ;; flyspell in clojure mode. Only in comments
   (add-hook 'clojure-mode-hook

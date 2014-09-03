@@ -8,7 +8,7 @@
 ;; name can be be a bit different, which would screw up autoconnect
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
-  '((".*\\.freenode.net" "#emacs" "#clojure" "#twisted" "#twisted-web")))
+  '((".*\\.freenode.net" "#emacs" "#clojure" "#twisted" "#pallet")))
 ;;     (".*\\.gimp.org" "#unix" "#gtk+")))
 
 ;; check channels
