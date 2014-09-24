@@ -1,21 +1,42 @@
-;;Time-stamp: <2014-08-08 10:08:07 agasson>
+;; Gas bindings
+;;
+;; Time-stamp: <2014-09-24 13:30:40 agasson>
 
 ;;(define-key global-map (kbd "M-3") (lambda () (interactive) (insert "#")))
 
 ;;(global-unset-key (kbd "M-3"))
 ;;(global-set-key (kbd "M-3") (lambda () (interactive) (insert "#")))
 
+;;  ************* MACintosh *****************************
 (setq mac-option-modifier nil
       mac-command-modifier 'meta
       x-select-enable-clipboard)
 
-;;Setup update of timestamp on file change - 1st eight lines of file : Time-stamp: <>
-(add-hook 'before-save-hook 'time-stamp)
+;; ************** Org-mode ***************************
+
+(global-set-key (kbd "C-c l")  'org-store-link)
+(global-set-key (kbd "C-c a")  'org-agenda)
+(global-set-key (kbd "C-c b")  'org-iswitchb)
+(global-set-key (kbd "C-c g") 'gtd )
+
+(global-set-key (kbd "<f1>")   'org-agenda)
+(global-set-key (kbd "<f2>")   'org-clock-goto)
+(global-set-key (kbd "C-<f2>") 'org-clock-in)
+
+(global-set-key (kbd "C-c C-x C-i") 'org-pomodoro)
+(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+
+(define-key global-map "\C-cr"
+  (lambda () (interactive) (org-capture nil "r")))
+(define-key global-map "\C-cj"
+  (lambda () (interactive) (org-capture nil "j")))
+
+
 
 ;;(define-prefix-command 'f9)
 ;;(define-prefix-command 'f11)
-;;(global-set-key (kbd "\C-cI")   'bh/punch-in)
-;;(global-set-key (kbd "\C-cO")   'bh/punch-out)
+(global-set-key (kbd "\C-cI")   'gas/punch-in)
+(global-set-key (kbd "\C-cO")   'gas/punch-out)
 ;;(global-set-key (kbd "\C-c SPC") 'bh/clock-in-last-task)
 ;;(global-set-key (kbd "C-c C-x C-p") 'org-pomodoro)
 ;;(global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
@@ -31,5 +52,9 @@
 ;;(define-key <f11> 'org-clock-goto)
 ;;(define-key (kbd "\C") f11 'org-clock-in)
 ;;(define-key (kbd "\M" )f11 'org-resolve-clocks)
+
+
+;; ***************** ERC *****************************
 ;; switch to ERC with Ctrl+c e
+
 (global-set-key (kbd "C-c e") 'gas-erc-start-or-switch) ;; ERC
