@@ -1,5 +1,5 @@
 ;; Gas pack
-;; Time-stamp: <2014-08-08 10:22:44 agasson>
+;; Time-stamp: <2014-09-24 13:22:32 agasson>
 ;; Load bindings config
 
 (require 'package)
@@ -25,8 +25,9 @@
       (when (not (package-installed-p p))
         (package-install p)))))
 
-;; Time-stamp hook for saving alst file saved time
+;; Time-stamp hook for saving last file saved time
 (setq time-stamp-pattern nil)
+;;Setup update of timestamp on file change - 1st eight lines of file : Time-stamp: <>
 (add-hook 'before-save-hook 'time-stamp)
 
 (live-load-config-file "clean-mode-line.el")
@@ -34,8 +35,11 @@
 ;;(live-load-config-file "gas-mobileorg.el")
 (live-load-config-file "gas-irc.el")
 (live-load-config-file "gas-sauron.el")
-(live-load-config-file "gas-bindings.el")
 (live-load-config-file "gas-spell.el")
+(live-load-config-file "gas-org.el")
+(live-load-config-file "gas-clocking.el")
+(live-load-config-file "gas-orgagenda.el")
+(live-load-config-file "gas-bindings.el")
 
 ;; Load ctable
 (live-add-pack-lib "ctable")
@@ -44,13 +48,7 @@
 (live-add-pack-lib "sauron")
 (require 'sauron)
 
-
-;(defvar alert-default-style 'growl)
-;(alert "This is an debugalert" :title "My Alert" :category 'debug)
-;(alert "This is a SERIOUS alert" :category 'critical )
-
-;(load-file (concat (live-pack-lib-dir) "gandalf.el"))
-
+(live-add-pack-lib "maxframe")
 (require 'maxframe)
 (setq mf-max-width 1200)  ;; Pixel width of main monitor.
 (add-hook 'window-setup-hook 'maximize-frame t)
