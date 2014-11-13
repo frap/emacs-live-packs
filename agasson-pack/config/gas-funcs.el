@@ -1,0 +1,10 @@
+(defun open-encrypted-file (fname)
+  (interactive "FFind file: \n")
+  (let ((buf (create-file-buffer fname)))
+    (shell-command
+     (concat "echo " (read-passwd "Decrypt password: ") " | bcrypt -o " fname)
+     buf)
+    (set-buffer buf)
+    (kill-line) (kill-line)
+    (toggle-read-only)
+    (not-modified)))
