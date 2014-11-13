@@ -1,5 +1,5 @@
 ;; Gas pack
-;; Time-stamp: <2014-09-24 13:22:32 agasson>
+;; Time-stamp: <2014-09-24 14:53:28 agasson>
 ;; Load bindings config
 
 (require 'package)
@@ -27,6 +27,7 @@
 
 ;; Time-stamp hook for saving last file saved time
 (setq time-stamp-pattern nil)
+
 ;;Setup update of timestamp on file change - 1st eight lines of file : Time-stamp: <>
 (add-hook 'before-save-hook 'time-stamp)
 

@@ -277,19 +277,6 @@ This does take care of the proper quoting of fields with comma or quotes."
 
 ;;%U = current timestamp %? = put cursor %i initial content, %a annotation aka link, %i includes any kill ring buffer
 
-;; Remove empty LOGBOOK drawers on clock out
-(defun bh/remove-empty-drawer-on-clock-out ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line 0)
-    (org-remove-empty-drawer-at "LOGBOOK" (point))))
-
-(add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
-
-(defun gtd ()
-  (interactive)
-  find-file "~/Dropbox/GTD/gtd.org")
-(global-set-key (kbd "C-c g") 'gtd )
 
 
 (setq org-directory "~/Dropbox/GTD/")
