@@ -10,3 +10,9 @@
 [submodule "gas-gtd-pack"]
 	path = gas-gtd-pack
 	url = ./gas-gtd-pack
+[submodule "agasson-pack/lib/express"]
+	path = agasson-pack/lib/express
+	url = https://github.com/rolandwalker/express
+[submodule "agasson-pack/lib/org-helpers"]
+	path = agasson-pack/lib/org-helpers
+	url = https://github.com/leoc/org-helpers.el

@@ -1,5 +1,5 @@
 ;;; gas-orgagenda.el --- My Org-Agenda settings
-;; Time-stamp: <2014-09-22 12:58:48 agasson>
+;; Time-stamp: <2014-12-11 15:47:13 agasson>
 
 (require 'org-helpers)
 
@@ -18,8 +18,21 @@
 
 (add-hook 'org-agenda-mode-hook 'custom-org-agenda-mode-defaults 'append)
 
+;; DO Not dim blocked tasks
+(setq org-agenda-dim-blocked-tasks nil)
+;; Compact the block agenda view
+(setq org-agenda-compact-blocks t)
+;; Set the default agenda-view to 1 day
+(setq org-agenda-span 1)
 (setq org-agenda-custom-commands
-      '((" " "Agenda"
+      '(("N" "Notes" tags "NOTE"
+         ((org-agenda-overriding-header "Notes")
+          (org-tags-match-list-sublevels t)))
+        ("h" "Habitutes" tags-todo "STYLE=\"habit\""
+         ((org-agenda-overriding-header "Habitudes")
+          (org-agenda-sorting-strategy
+           '(todo-state-down effort-up category-keep))))
+        (" " "Ordre du Jour"
          ((agenda "" nil)
           (alltodo ""
                    ((org-agenda-overriding-header "Tâches à la Représenter")

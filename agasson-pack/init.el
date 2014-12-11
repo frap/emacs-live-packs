@@ -1,10 +1,10 @@
 ;; Gas pack
-;; Time-stamp: <2014-09-24 14:53:28 agasson>
+;; Time-stamp: <2014-11-17 17:46:44 agasson>
 ;; Load bindings config
 
 (require 'package)
 
-;; inactivate any proxy (got some trouble with authentication)
+;; inactivate any proxy (@ Datacom had some trouble with authentication)
 (setq url-proxy-services '(("no_proxy" . "red-elvis\\.net")))
 
 (add-to-list 'package-archives
@@ -27,9 +27,9 @@
 
 ;; Time-stamp hook for saving last file saved time
 (setq time-stamp-pattern nil)
-
 ;;Setup update of timestamp on file change - 1st eight lines of file : Time-stamp: <>
 (add-hook 'before-save-hook 'time-stamp)
+
 
 (live-load-config-file "clean-mode-line.el")
 (live-load-config-file "secrets.el")

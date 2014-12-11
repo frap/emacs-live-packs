@@ -1,5 +1,5 @@
 ;;; gas-clocking.el --- Pomodoro implementation and clocking for org-mode.
-;; Time-stamp: <2014-09-22 12:58:54 agasson>
+;; Time-stamp: <2014-12-11 15:47:14 agasson>
 
 ;; Author: Arthur Leonard Andersen <leoc.git@gmail.com>, Marcin Koziej <marcin at lolownia dot org>
 ;; Author: Andrew Gasson modified to have my GTD clocking settings
@@ -46,12 +46,12 @@
 ;; Resume clocking tasks when emacs is restarted
 (org-clock-persistence-insinuate)
 ;;
-;; Small windows on my Eee PC displays only the end of long lists which isn't very useful
-(setq org-clock-history-length 10)
+;; show lots of clocking history
+(setq org-clock-history-length 20)
 ;; Resume clocking task on clock-in if the clock is open
 (setq org-clock-in-resume t)
 ;; Change task to COMMENCÉ when clocking in
-(setq org-clock-in-switch-to-state 'bh/clock-in-to-started)
+(setq org-clock-in-switch-to-state 'gas/clock-in-to-next)
 ;; Separate drawers for clocking and logs
 (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
 ;; Save clock data and state changes and notes in the LOGBOOK drawer
